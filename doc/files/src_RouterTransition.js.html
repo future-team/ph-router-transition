@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimal-ui" />
+    <title>src/RouterTransition.js - ph-router-transition</title>
+  
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-smart" _assetsPath="../assets">
+ <nav class="navbar navbar-inverse navbar-fixed-top custom-navbar" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+               <a class="navbar-brand mainlogo" href="">
+             
+            <img alt="ph-router-transition" src="../assets/css/logo.png" title="ph-router-transition">
+            
+                ph-router-transition
+          </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                 <ul class="nav navbar-nav">
+                    
+                    <li><a href="index.html">主页</a>
+                    </li>
+                    
+                </ul>
+               <div class="navbar-form navbar-right filterAPi" autocomplete="off">
+                <input type="text" id='txtSearchAPI' class="form-control search-query" placeholder="Search for API" />
+                 <ul id="filterList" class="filterItems dropdown-menu" role="menu"></ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div id="sidebar">
+    <h3>模块/类</h3>
+        <div id="api-tabview-filter">
+            <input id='txtSearch' type="search" class="form-control" placeholder="Type to filter Modules/Classes">
+        </div>
+        <dl id="sidebar_list">
+             
+                <dt>
+                    <span class="glyphicon glyphicon-minus"></span>
+                    <a href="../modules/路由动画.html">路由动画</a>
+                </dt>
+                <dd>
+                    <ul>
+                   
+                       <li>
+                            
+                           <a href="../classes/RouterTransition.html">RouterTransition</a>
+                           <ul>
+                                
+                           </ul>
+                       </li>
+                    
+                    </ul>
+                </dd>
+             
+        </dl>
+    <div class="icon-sidebar-btn icon-sidebar-btn-open"><span class="glyphicon glyphicon-chevron-left"></span>收起</div>
+</div>
+   
+    <div class="stdoc-content">
+        <div class="apidocs">
+            <div id="docs-main">
+                <div class="content">
+                    <div class="page-header">
+    <h1>src/RouterTransition.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums" id='src_code'>
+import React, { PropTypes } from &#x27;react&#x27;;
+import ReactDOM from &#x27;react/lib/ReactDOM&#x27;;
+import classnames from &#x27;classnames&#x27;;
+import Queue from &#x27;promise-queue&#x27;;
+
+/**
+ * 路由切换组件&lt;br/&gt;
+ * - 通过&#x60;transitionName&#x60;设置动画类型，可选&#x60;[fade, slide-top, slide-bottom, slide-left, slide-right]&#x60;。
+ * - 通过&#x60;loadedCallback&#x60;函数设置动画完成的回调。
+ * - 可通过&#x60;timeout&#x60;设置动画时间，和设置的css的动画时间一致是最流畅的。
+ * - 在列表页的最外层元素加&#x60;ph-transition-index&#x60;类，其他页面跳转到列表页都是回退的效果，到另一个新页面都是前进的效果。
+ *
+ * 主要属性和接口：
+ * - transitionName:动画类型/动画名称，默认fade。
+ * - loadedCallback:动画完成的回调函数。
+ * - timeout:动画时间。
+ * 
+ * 示例：
+ * &#x60;&#x60;&#x60;code
+ *  import RouterTransition from &#x27;ph-router-transition&#x27;;
+ * 
+ *  const PageTransition = (props)=&gt;(
+ *      &lt;RouterTransition {...props} transitionName=&quot;slide-left&quot; loadedCallback={()=&gt;{console.log(&#x27;end!!!&#x27;);}} timeout={500}&gt;{props.children}&lt;/RouterTransition&gt;
+ *  );
+ * &#x60;&#x60;&#x60;
+ * &#x60;&#x60;&#x60;code
+ *  let Index = class index extends Component {
+ *      render() {
+ *          return (
+ *              &lt;div className=&quot;menu ph-transition-index&quot;&gt;
+ *                  ...
+ *              &lt;/div&gt;
+ *          );
+ *      }
+ *  };
+ * &#x60;&#x60;&#x60;
+ * &#x60;&#x60;&#x60;code
+ *  &lt;Router history={this.history}&gt;
+ *      &lt;Route component={PageTransition}&gt;
+ *          &lt;Route path=&quot;/index&quot; name=&quot;index&quot; component={Index} /&gt;
+ *          &lt;Route path=&quot;/detail&quot; name=&quot;detail&quot; component={Detail} /&gt;
+ *          ...
+ *          &lt;Redirect from=&quot;/&quot; to=&quot;/index&quot; /&gt;
+ *      &lt;/Route&gt;
+ *  &lt;/Router&gt;
+ * &#x60;&#x60;&#x60;
+ * 
+ * @class RouterTransition
+ * @module 路由动画
+ * @extends Component
+ * @constructor
+ * @since 0.1.0
+ * @demo index|index.js {展示}
+ * @show true
+ * */
+
+export default class RouterTransition extends React.Component{
+
+    static propTypes={
+        /**
+         * 动画名称，可选[fade, slide-top, slide-bottom, slide-left, slide-right]
+         * @property transitionName
+         * @type String
+         * @default &#x27;fade&#x27;
+         * */
+        transitionName: PropTypes.string,
+        /**
+         * 动画结束执行的回调
+         * @method loadedCallback
+         * @type Function
+         * @default null
+         * */
+        loadedCallback: PropTypes.func,
+        /**
+         * 动画时间，和设置的css的动画时间一致是最流畅的
+         * @property timeout
+         * @type Number
+         * @default 500
+         * */
+        timeout: PropTypes.number,
+        animateOnInit: PropTypes.bool,
+        data: PropTypes.object,
+    };
+
+    static defaultProps = {
+        timeout: 500,
+        transitionName: &#x27;fade&#x27;,
+        animateOnInit: true,
+        classMapping : {}
+    };
+
+    constructor(props,context){
+        super(props,context);
+
+        if(this.props.animateOnInit){
+            this.state = {
+                child1: null,
+                child2: null,
+                nextChild: 1
+            }
+        }else{
+            this.state = {
+                child1: this.props.children,
+                child2: null, 
+                nextChild: 2
+            }
+        }
+
+        this.transite = this.transite.bind(this);
+        this.gerRef = this.getRef.bind(this);
+
+        this.queue = new Queue(1, Infinity);
+
+        this.itemClass = &#x27;ph-transition-item&#x27;;
+        
+        this.routeRecord = [props.location.pathname];
+        this.forward = true;
+    }
+
+    componentDidMount(){
+        let {animateOnInit, data, children} = this.props;
+
+        if(!animateOnInit){
+            const child = this.getRef(&#x27;child1&#x27;);
+            if(child){
+                const dom = ReactDOM.findDOMNode(child);
+                child.onTransitionDidEnd &amp;&amp; child.onTransitionDidEnd(data);
+                dom.classList.remove(this.itemClass);
+            }
+        }else{
+            this.transite(children);
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        // 判断当前是往前还是后退
+        this.forward = this.routeForward(nextProps.location.pathname);
+
+        const transitNewChild = () =&gt; {
+            this.queue.add(()=&gt; this.transite(nextProps.children));
+        };
+        const updateChild = () =&gt; {
+            const currentChild = this.state.nextChild === 1? 2:1;
+            this.state[&#x60;child${currentChild}&#x60;] = nextProps.children;
+            this.forceUpdate();
+        }
+
+        if(this.props.children &amp;&amp; this.props.children.props &amp;&amp; this.props.children.props[&#x27;data-transition-id&#x27;] 
+            &amp;&amp; nextProps.children.props[&#x27;data-transition-id&#x27;]) {
+
+            if (this.props.children.props[&#x27;data-transition-id&#x27;] !== nextProps.children.props[&#x27;data-transition-id&#x27;]) {
+                transitNewChild();
+            } else {
+                updateChild();
+            }
+        } else {
+            if (this.props.children !== nextProps.children) {
+                transitNewChild();
+            } else {
+                updateChild();
+            }
+        }
+    }
+
+    routeForward(nextPathName){
+        let routeLen = this.routeRecord.length;
+
+        if(routeLen&gt;1 &amp;&amp; this.routeRecord[routeLen-2]===nextPathName){// back
+            this.routeRecord.pop();
+            return false;
+        }else{
+            this.routeRecord.push(nextPathName);
+            return true;
+        }
+    }
+
+    getClass(mode){
+        if(mode&amp;&amp;this.forward || !mode&amp;&amp;!this.forward){
+            return &#x27;ph-transition-from&#x27;;
+        }else{
+            return &#x27;ph-transition-to&#x27;;
+        }
+    }
+
+    getRef(ref){
+        let child = this.refs[ref];
+        if(child &amp;&amp; child.getWrappedInstance){
+            child = child.getWrappedInstance();
+        }
+        return child;
+    }
+
+    transite(nextChild){
+        return new Promise((transiteDone, transiteFailed)=&gt;{
+            this.state[&#x60;child${this.state.nextChild}&#x60;] = nextChild;
+            this.forceUpdate(() =&gt; {
+                const prevChild = this.getRef(&#x60;child${this.state.nextChild === 1 ? 2 : 1}&#x60;);
+                const newChild = this.getRef(&#x60;child${this.state.nextChild}&#x60;);
+                const prevChildDom = ReactDOM.findDOMNode(prevChild);
+                const newChildDom = ReactDOM.findDOMNode(newChild);
+                let timeout = 0;
+                
+                const willStart = () =&gt; {
+                    if (newChild.onTransitionWillStart) {
+                        return newChild.onTransitionWillStart(this.props.data) || Promise.resolve();
+                    }
+                    if (prevChild &amp;&amp; prevChild.onTransitionLeaveWillStart) {
+                        return prevChild.onTransitionLeaveWillStart(this.props.data) || Promise.resolve();
+                    }
+                    return Promise.resolve();
+                };
+
+                const start = () =&gt; {
+                    //强制设置列表页
+                    if(newChildDom.classList.contains(&#x27;ph-transition-index&#x27;)){
+                        this.forward = false;
+                    }else if(prevChildDom &amp;&amp; prevChildDom.classList.contains(&#x27;ph-transition-index&#x27;)){
+                        this.forward = true;
+                    }
+
+                    if (newChildDom) {
+                        timeout = this.props.timeout;
+                        newChildDom.classList.add(this.props.transitionName + &#x27;-enter&#x27;);
+                        if(prevChildDom) newChildDom.classList.add(this.itemClass);
+                        newChildDom.classList.add(this.getClass(true));
+
+                        newChildDom.offsetHeight; // Trigger layout to make sure transition happen
+                        
+                        if (newChild.transitionManuallyStart) {
+                            return newChild.transitionManuallyStart(this.props.data, start) || Promise.resolve();
+                        }
+                        newChildDom.classList.add(this.props.transitionName + &#x27;-enter-active&#x27;);
+                    }
+
+                    if (prevChildDom) {
+                        prevChildDom.classList.add(this.props.transitionName + &#x27;-leave&#x27;);
+                        prevChildDom.classList.add(this.itemClass);
+                        prevChildDom.classList.add(this.getClass(false));
+                        
+                        timeout = this.props.timeout;
+                        prevChildDom.offsetHeight; // Trigger layout to make sure transition happen
+
+                        if (prevChild.transitionLeaveManuallyStart) {
+                            return prevChild.transitionLeaveManuallyStart(this.props.data, start) || Promise.resolve();
+                        }
+                        prevChildDom.classList.add(this.props.transitionName + &#x27;-leave-active&#x27;);
+                    }
+                    return Promise.resolve();
+                };
+
+                const didStart = () =&gt; {
+                    if (newChild.onTransitionDidStart) {
+                        return newChild.onTransitionDidStart(this.props.data) || Promise.resolve();
+                    }
+                    if (prevChild &amp;&amp; prevChild.onTransitionDidStartLeave) {
+                        return prevChild.onTransitionLeaveDidStart(this.props.data) || Promise.resolve();
+                    }
+                    return Promise.resolve();
+                };
+
+                // Wait for transition
+                const waitForTransition = () =&gt; new Promise(resolve =&gt; {
+                    setTimeout(() =&gt; {
+                        // Swap child and remove the old child
+                        this.state.nextChild = this.state.nextChild === 1 ? 2 : 1;
+                        this.state[&#x60;child${this.state.nextChild}&#x60;] = null;
+                        this.forceUpdate(resolve);
+                    }, timeout);
+                });
+
+                // Before remove classes
+                const willEnd = () =&gt; {
+                    if (newChild.onTransitionWillEnd) {
+                        return newChild.onTransitionWillEnd(this.props.data) || Promise.resolve();
+                    }
+                    if (prevChild &amp;&amp; prevChild.onTransitionLeaveWillEnd) {
+                        return prevChild.onTransitionLeaveWillEnd(this.props.data) || Promise.resolve();
+                    }
+                    return Promise.resolve();
+                };
+
+                // Remove appear and active class (or trigger manual end)
+                const end = () =&gt; {
+                    if (newChildDom) {
+                        newChildDom.classList.remove(this.props.transitionName + &#x27;-enter&#x27;);
+                        newChildDom.classList.remove(this.getClass(true));
+                        newChildDom.classList.remove(this.itemClass);
+
+                        if (newChild.transitionManuallyStop) {
+                            return newChild.transitionManuallyStop(this.props.data) || Promise.resolve();
+                        }
+                        newChildDom.classList.remove(this.props.transitionName + &#x27;-enter-active&#x27;);
+                    }
+
+                    if (prevChildDom) {
+                        prevChildDom.classList.remove(this.props.transitionName + &#x27;-leave&#x27;);
+                        prevChildDom.classList.remove(this.getClass(false));
+                        prevChildDom.classList.remove(this.itemClass);
+
+                        if (prevChild.transitionLeaveManuallyStop) {
+                            return prevChild.transitionLeaveManuallyStop(this.props.data) || Promise.resolve();
+                        }
+                        prevChildDom.classList.remove(this.props.transitionName + &#x27;-leave-active&#x27;);
+                    }
+                    return Promise.resolve();
+                };
+
+                // After remove classes
+                const didEnd = () =&gt; {
+                    if (newChild.onTransitionDidEnd) {
+                        return newChild.onTransitionDidEnd(this.props.data) || Promise.resolve();
+                    }
+                    if (prevChild &amp;&amp; prevChild.onTransitionLeaveDidEnd) {
+                        return prevChild.onTransitionLeaveDidEnd(this.props.data) || Promise.resolve();
+                    }
+                    return Promise.resolve();
+                };
+
+                Promise.resolve()
+                    .then(willStart)
+                    .then(start)
+                    .then(didStart)
+                    .then(waitForTransition)
+                    .then(willEnd)
+                    .then(end)
+                    .then(didEnd)
+                    .then(()=&gt;{
+                        this.props.loadedCallback &amp;&amp; this.props.loadedCallback();
+                        transiteDone();
+                    })
+                    .catch(transiteFailed);
+            });
+        });
+    }
+
+    render(){
+        return (
+            &lt;div {...this.props} className={classnames(&#x27;ph-transition-wrapper&#x27;, this.props.className)} &gt;
+                {
+                    React.Children.map(this.state.child1, element =&gt; React.cloneElement(element, {ref: &#x27;child1&#x27;}))
+                }
+                {
+                    React.Children.map(this.state.child2, element =&gt; React.cloneElement(element, {ref: &#x27;child2&#x27;}))
+                }
+            &lt;/div&gt;
+        );
+    }
+}
+    </pre>
+</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+<a id="gotoTop" class='well well-small' href='#'>
+</a>
+<script src="../assets/vendor/jquery/jquery-1.8.2.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/doc.js"></script>
+
+</body>
+</html>

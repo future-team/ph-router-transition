@@ -1,0 +1,109 @@
+@import 'reset';
+@import 'animation';
+
+.ph-transition-wrapper{
+    position: relative;
+    z-index: 1;
+}
+
+.ph-transition-item{
+	position: fixed;
+	overflow: auto;
+	height: 100vh;
+	top: 0;
+	right: 0;
+	left: 0;
+	.transition(all .5s);
+}
+
+.ph-transition-from{
+	// slide-left
+	&.slide-left-enter,
+	&.slide-left-leave.slide-left-leave-active{
+	    .transform(translateX(100%));
+	}
+
+	&.slide-left-enter.slide-left-enter-active,
+	&.slide-left-leave{
+	    .transform(translateX(0));
+	}
+
+	// slide-right
+	&.slide-right-enter,
+	&.slide-right-leave.slide-right-leave-active{
+	    .transform(translateX(-100%));
+	}
+
+	&.slide-right-enter.slide-right-enter-active,
+	&.slide-right-leave{
+	    .transform(translateX(0));
+	}
+
+	// slide-top
+	&.slide-top-enter,
+	&.slide-top-leave.slide-top-leave-active {
+	    .transform(translateY(-100%));
+	}
+
+	&.slide-top-enter.slide-top-enter-active,
+	&.slide-top-leave {
+	    .transform(translateY(0));
+	}
+
+	// slide-bottom
+	&.slide-bottom-enter,
+	&.slide-bottom-leave.slide-bottom-leave-active {
+	    .transform(translateY(100%));
+	}
+
+	&.slide-bottom-enter.slide-bottom-enter-active,
+	&.slide-bottom-leave {
+	    .transform(translateY(0));
+	}
+}
+
+.ph-transition-to{
+	// slide-left
+	&.slide-left-enter,
+	&.slide-left-leave.slide-left-leave-active{
+	    .transform(translateX(-100%));
+	}
+
+	&.slide-left-enter.slide-left-enter-active,
+	&.slide-left-leave{
+	    .transform(translateX(0));
+	}
+
+	// slide-right
+	&.slide-right-enter,
+	&.slide-right-leave.slide-right-leave-active{
+	    .transform(translateX(100%));
+	}
+
+	&.slide-right-enter.slide-right-enter-active,
+	&.slide-right-leave{
+	    .transform(translateX(0));
+	}
+
+	// slide-top
+	&.slide-top-enter,
+	&.slide-top-leave.slide-top-leave-active {
+	    .transform(translateY(100%));
+	}
+
+	&.slide-top-enter.slide-top-enter-active,
+	&.slide-top-leave {
+	    .transform(translateY(0));
+	}
+
+	// slide-bottom
+	&.slide-bottom-enter,
+	&.slide-bottom-leave.slide-bottom-leave-active {
+	    .transform(translateY(-100%));
+	}
+
+	&.slide-bottom-enter.slide-bottom-enter-active,
+	&.slide-bottom-leave {
+	    .transform(translateY(0));
+	}
+}
