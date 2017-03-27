@@ -6,7 +6,7 @@
 	else if(typeof exports === 'object')
 		exports["PhRouterTransition"] = factory(require("react"), require("react/lib/ReactDOM"));
 	else
-		root["PhRouterTransition"] = factory(root["React"], root["ReactDom"]);
+		root["PhRouterTransition"] = factory(root["React"], root["ReactDOM"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_4__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache

@@ -14,7 +14,7 @@
         <RouterTransition {...props} transitionName="slide-left" loadedCallback={()=>{console.log('end!!!');}} timeout={500}>{props.children}</RouterTransition>
     );
 
-    et Index = class index extends Component {
+    let Index = class index extends Component {
         render() {
             return (
                  <div className="menu ph-transition-index">
@@ -65,12 +65,11 @@
 ```
 
 ## Command
-
 ```
-	$ npm run demo
-	$ npm run build
-	$ npm run doc
-	$ npm run test
+    $ npm run demo
+    $ npm run build
+    $ npm run doc
+    $ npm run test
 ```
 
 ## Repair

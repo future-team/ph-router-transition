@@ -38,7 +38,7 @@ module.exports ={
             amd: 'react'
         },
         'react/lib/ReactDOM': {
-            root: 'ReactDom',
+            root: 'ReactDOM',
             commonjs2: 'react/lib/ReactDOM',
             commonjs: 'react/lib/ReactDOM',
             amd: 'react/lib/ReactDOM'
