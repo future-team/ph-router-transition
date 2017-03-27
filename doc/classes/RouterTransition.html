@@ -275,14 +275,13 @@
             </ul>
             <div class="example-content  showdemo ">
                 <div class="stdoc-code"><pre class="code prettyprint"><code>import React, { Component } from &#39;react&#39;;
-import ReactDOM from &#39;react/lib/ReactDOM&#39;;
+import ReactDOM from &#39;react-dom&#39;;
 import { Redirect, Router, Route } from &#39;react-router&#39;;
 import History from &#39;history/lib/createHashHistory&#39;;
 import RouterTransition from &#39;ph-router-transition&#39;;
 
 import Detail from &#39;./detail.js&#39;;
-
-import &#39;../css/common.less&#39;;
+import About from &#39;./about.js&#39;;
 
 let Index = class Index extends Component {
     render() {
@@ -292,8 +291,8 @@ let Index = class Index extends Component {
                     ph-router-transition
                 &lt;/header&gt;
                 &lt;ul className="index-menu"&gt;
-                    &lt;li&gt;&lt;a href="#/detail"&gt;Detail1&lt;/a&gt;&lt;/li&gt;
-                    &lt;li&gt;&lt;a href="#/detail"&gt;Detail2&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#/detail"&gt;Detail&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#/about"&gt;About&lt;/a&gt;&lt;/li&gt;
                 &lt;/ul&gt;
             &lt;/div&gt;
         );
@@ -328,6 +327,7 @@ let AppRouter = class AppRouter extends Component {
                 &lt;Route component={PageTransition}&gt;
                     &lt;Route path="/index" name="index" component={Index} /&gt;
                     &lt;Route path="/detail" name="detail" component={Detail} /&gt;
+                    &lt;Route path="/about" name="about" component={About} /&gt;
                     &lt;Redirect from="/" to="/index" /&gt;
                 &lt;/Route&gt;
             &lt;/Router&gt;
