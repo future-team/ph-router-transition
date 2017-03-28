@@ -6,7 +6,7 @@ module.exports = {
     //扫描的文件路径
     paths: ['src/'],
     demoDir:"example/src/",
-    demoUrl: 'http://future-team.github.io/ph-router-transition/example/index.html#/',
+    demoUrl: 'https://future-team.github.io/ph-router-transition/example/index.html#/',
     //文档页面输出路径
     outdir: 'doc/',
     //内置主题
